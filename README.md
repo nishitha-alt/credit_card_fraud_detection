@@ -59,7 +59,7 @@ and one that scales to the volume a real card network would need to handle.
 - `requirements.txt` — Python dependencies
 
 ## Live demo
-[Link to deployed Streamlit app — added in Step 13]
+https://credit-fraud-app-2026.streamlit.app/
 
 ## Tools
 Python, pandas, scikit-learn, XGBoost, imbalanced-learn (SMOTE), SHAP,
