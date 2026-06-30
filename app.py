@@ -57,7 +57,7 @@ if st.button("Check for Fraud", type="primary"):
         df_features['Amount_scaled'] = scaler.transform(df_features[['Amount']])
         df_features = df_features.drop(columns=['Amount'])
 
-        expected_cols = [f'V{i}' for i in range(1, 29)] + ['Amount_scaled', 'Hour']
+        expected_cols = [f'V{i}' for i in range(1, 29)] + ['Hour', 'Amount_scaled']
         df_features = df_features[expected_cols]
 
         probs = model.predict_proba(df_features)[:, 1]
