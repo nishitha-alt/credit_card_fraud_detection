@@ -45,13 +45,26 @@ if st.button("Check for Fraud", type="primary"):
         except Exception as e:
             st.warning(f"Couldn't parse that input — check the format. ({e})")
     elif uploaded:
-        df_in = pd.read_csv(uploaded)
-        df_in['Amount_scaled'] = scaler.transform(df_in[['Amount']])
-        df_features = df_in.drop(columns=['Amount'])
-        probs = model.predict_proba(df_features)[:, 1]
-        df_in['fraud_probability'] = probs
-        df_in['prediction'] = (probs >= 0.5).astype(int)
-        st.dataframe(df_in.sort_values('fraud_probability', ascending=False))
+    df_in = pd.read_csv(uploaded)
+
+    df_features = df_in.copy()
+    if 'Time' in df_features.columns:
+        df_features['Hour'] = (df_features['Time'] // 3600) % 24
+        df_features = df_features.drop(columns=['Time'])
+    if 'Class' in df_features.columns:
+        df_features = df_features.drop(columns=['Class'])
+
+    df_features['Amount_scaled'] = scaler.transform(df_features[['Amount']])
+    df_features = df_features.drop(columns=['Amount'])
+
+    # match the exact column order the model was trained on
+    expected_cols = [f'V{i}' for i in range(1, 29)] + ['Amount_scaled', 'Hour']
+    df_features = df_features[expected_cols]
+
+    probs = model.predict_proba(df_features)[:, 1]
+    df_in['fraud_probability'] = probs
+    df_in['prediction'] = (probs >= 0.5).astype(int)
+    st.dataframe(df_in.sort_values('fraud_probability', ascending=False))
     else:
         st.warning("Paste some values or upload a CSV first.")
 
